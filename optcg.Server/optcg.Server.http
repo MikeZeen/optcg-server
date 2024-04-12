@@ -1,0 +1,6 @@
+@optcg.Server_HostAddress = http://localhost:5093
+
+GET {{optcg.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
