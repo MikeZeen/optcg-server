@@ -46,5 +46,8 @@ namespace optcg.Server
         [Column("booster")]
         public string? CardBooster { get; set; }
 
+        [Column("images")]
+        public string? CardImages { get; set; }
+
     }
 }

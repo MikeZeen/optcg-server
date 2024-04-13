@@ -22,7 +22,8 @@ namespace optcg.Server.Controllers
             CardDescription = "Can't be blocked by Don!! cards.",
             CardType = "Straw Hat",
             CardStatus = "LEGAL",
-            CardBooster = "Test Booster"
+            CardBooster = "Test Booster",
+            CardImages = "PlaceholderImage"
         };
 
         private readonly OnePieceCardContext _context;
