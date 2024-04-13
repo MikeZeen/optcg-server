@@ -34,17 +34,24 @@ namespace optcg.Server.Controllers
         }
 
         [HttpGet]
-        [Route("")]
-        public IActionResult GetOnePieceCards()
+        [Route("page={page}&perPage={perPage}")]
+        public IActionResult GetOnePieceCards(int page = 1, int perPage = 25)
         {
-            var cards = _context.OnePieceCards.Select(c => c).ToList();
+            int skip = (page - 1) * perPage;
+
+            var cards = _context.OnePieceCards
+                                .Skip(skip)
+                                .Take(perPage)
+                                .ToList();
 
             if (!cards.Any())
             {
                 return NotFound();
             }
 
-            return Ok(cards);
+            int totalCards = _context.OnePieceCards.Count();
+
+            return Ok(new { Cards = cards, TotalCards = totalCards });
         }
 
         [HttpGet]
