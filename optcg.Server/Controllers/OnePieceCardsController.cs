@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel;
+using System.Linq;
 
 
 namespace optcg.Server.Controllers
@@ -8,24 +9,6 @@ namespace optcg.Server.Controllers
     [Route("cards")]
     public class OnePieceCardsController : ControllerBase
     {
-        private static readonly OnePieceCards _placeholderCard = new OnePieceCards
-        {
-            CardId = "OP01-001",
-            CardName = "Monkey D. Luffy",
-            CardCategory = "Leader",
-            CardColor = "Red",
-            CardLife = 4000,
-            CardCost = 3,
-            CardPower = 2000,
-            CardAttribute = "Slash",
-            CardBlocker = 0,
-            CardDescription = "Can't be blocked by Don!! cards.",
-            CardType = "Straw Hat",
-            CardStatus = "LEGAL",
-            CardBooster = "Test Booster",
-            CardImages = "PlaceholderImage"
-        };
-
         private readonly OnePieceCardContext _context;
 
         public OnePieceCardsController(OnePieceCardContext context)
@@ -33,15 +16,13 @@ namespace optcg.Server.Controllers
             _context = context;
         }
 
+        //ALL Cards
+
         [HttpGet]
-        [Route("page={page}&perPage={perPage}")]
-        public IActionResult GetOnePieceCards(int page = 1, int perPage = 25)
+        public IActionResult GetOnePieceCards()
         {
-            int skip = (page - 1) * perPage;
 
             var cards = _context.OnePieceCards
-                                .Skip(skip)
-                                .Take(perPage)
                                 .ToList();
 
             if (!cards.Any())
@@ -54,24 +35,35 @@ namespace optcg.Server.Controllers
             return Ok(new { Cards = cards, TotalCards = totalCards });
         }
 
+        //By All Variables
         [HttpGet]
-        [Route("{id}")]
-        public IActionResult GetOnePieceCard(string? id)
+        [Route("search")]
+        public IActionResult CheckOnePieceCard([FromQuery] OnePieceCards card)
         {
-            if (id == "placeholder")
+            var existingCards = _context.OnePieceCards.Where(c =>
+                (string.IsNullOrEmpty(card.CardId) || (c.CardId != null && c.CardId.Contains(card.CardId))) &&
+                (string.IsNullOrEmpty(card.CardName) || (c.CardName != null && c.CardName.Contains(card.CardName))) &&
+                (string.IsNullOrEmpty(card.CardCategory) || (c.CardCategory != null && c.CardCategory.Contains(card.CardCategory))) &&
+                (string.IsNullOrEmpty(card.CardColor) || (c.CardColor != null && c.CardColor.Contains(card.CardColor))) &&
+                (string.IsNullOrEmpty(card.CardAttribute) || (c.CardAttribute != null && c.CardAttribute.Contains(card.CardAttribute))) &&
+                (string.IsNullOrEmpty(card.CardDescription) || (c.CardDescription != null && c.CardDescription.Contains(card.CardDescription))) &&
+                (string.IsNullOrEmpty(card.CardType) || (c.CardType != null && c.CardType.Contains(card.CardType))) &&
+                (string.IsNullOrEmpty(card.CardStatus) || (c.CardStatus != null && c.CardStatus.Contains(card.CardStatus))) &&
+                (string.IsNullOrEmpty(card.CardBooster) || (c.CardBooster != null && c.CardBooster.Contains(card.CardBooster))) &&
+                (string.IsNullOrEmpty(card.CardImages) || (c.CardImages != null && c.CardImages.Contains(card.CardImages))) &&
+                (card.CardLife == null || c.CardLife == card.CardLife) &&
+                (card.CardCost == null || c.CardCost == card.CardCost) &&
+                (card.CardPower == null || c.CardPower == card.CardPower) &&
+                (card.CardBlocker == null || c.CardBlocker == card.CardBlocker)
+            );
+
+            if (!existingCards.Any())
             {
-                return Ok(_placeholderCard);
-            }
-            else
-            {
-                var card = _context.OnePieceCards.FirstOrDefault(c => c.CardId == id);
-                if (card == null)
-                {
-                    return NotFound();
-                }
-                return Ok(card);
+                return NotFound();
             }
 
+            var result = existingCards.ToList();
+            return Ok(new { Cards = result, TotalCount = existingCards.Count() });
         }
     }
 }

@@ -20,19 +20,19 @@ namespace optcg.Server
         public string? CardColor { get; set; }
 
         [Column("life")]
-        public int CardLife { get; set; }
+        public int? CardLife { get; set; }
 
         [Column("cost")]
-        public int CardCost { get; set; }
+        public int? CardCost { get; set; }
 
         [Column("power")]
-        public int CardPower { get; set; }
+        public int? CardPower { get; set; }
 
         [Column("attribute")]
         public string? CardAttribute { get; set; }
 
         [Column("blocker")]
-        public int CardBlocker { get; set; }
+        public int? CardBlocker { get; set; }
 
         [Column("description")]
         public string? CardDescription { get; set; }
