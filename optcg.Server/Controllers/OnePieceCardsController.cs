@@ -32,6 +32,8 @@ namespace optcg.Server.Controllers
 
             int totalCards = _context.OnePieceCards.Count();
 
+            Console.WriteLine("All Cards Retrieved from Database");
+
             return Ok(new { Cards = cards, TotalCards = totalCards });
         }
 
@@ -63,6 +65,8 @@ namespace optcg.Server.Controllers
             }
 
             var result = existingCards.ToList();
+
+            Console.WriteLine(result.ToString() + " Retrieved from Database");
             return Ok(new { Cards = result, TotalCount = existingCards.Count() });
         }
     }
